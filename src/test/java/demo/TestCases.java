@@ -1,15 +1,21 @@
 package demo;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.logging.Level;
 // import io.github.bonigarcia.wdm.WebDriverManager;
 import demo.wrappers.Wrappers;
@@ -21,7 +27,60 @@ public class TestCases {
      * TODO: Write your tests here with testng @Test annotation. 
      * Follow `testCase01` `testCase02`... format or what is provided in instructions
      */
+    @Test
+    public void testCase01() throws InterruptedException{
+        driver.get("https://docs.google.com/forms/d/e/1FAIpQLSep9LTMntH5YqIXa5nkiPKSs283kdwitBBhXWyZdAS-e4CxBQ/viewform");
+        //Enter name
+        Thread.sleep(10000);
+        WebElement nameInputBox = driver.findElement(By.xpath("//div[contains(@class,'k3kHxc')]//input"));
+        System.out.println("Wait 1");
+        Thread.sleep(3000);
+        Wrappers.enterText(nameInputBox, "Crio Learner");
+        //Why are you practicing Automation?
+        WebElement practiceAutomationText = driver.findElement(By.xpath("//textarea[contains(@class,'tL9Q4c')]"));
+        String automationText = "I want to be the best QA Engineer!";
+        String apochTime = Wrappers.getEpochTime();
+        Wrappers.enterText(practiceAutomationText, automationText +" "+apochTime);
+        //How much experience do you have in Automation Testing
+        //List<WebElement> experience = driver.findElements(By.xpath("//div[@role='radio']"));
+        Wrappers.radioButton(driver, "3 - 5");
+        System.out.println("Wait 2");
+        Thread.sleep(3000);
+        //Which of the following have you learned in Crio.Do for Automation Testing
+        List<WebElement> learnedSkills = driver.findElements(By.xpath("//div[@class=\"eBFwI\"]"));
+        Wrappers.checkBox(learnedSkills, "Java");
+        Wrappers.checkBox(learnedSkills, "Selenium");
+        Wrappers.checkBox(learnedSkills, "TestNG");
+        System.out.println("Wait 3");
+        Thread.sleep(3000);
+        //How should you be addressed
+        WebElement dropDown = driver.findElement(By.xpath("//span[text()='Choose']"));
+        Wrappers.clickOnElement(driver, dropDown);
+        //Thread.sleep(3000);
+        //List<WebElement> dropDownList =  driver.findElements(By.xpath("//div[contains(@class,'ncFHed')]/div"));
+        Wrappers.selectDropDown(driver, "Mr");
+        System.out.println("Wait 4");
+        Thread.sleep(3000);
+        //What was the date 7 days ago
+        WebElement dateInput = driver.findElement(By.xpath("//div[contains(@class,'A6uyJd')]//input"));
+        String sevenDaysAgo = Wrappers.getDatesDaysAgo(7);
+        System.out.println("Wait 5");
+        Thread.sleep(3000);
+        Wrappers.enterText(dateInput, sevenDaysAgo);
+        //What is the time right now
+        WebElement hourElement = driver.findElement(By.xpath("//input[@aria-label='Hour']"));
+        WebElement minuteElement = driver.findElement(By.xpath("//input[@aria-label='Minute']"));
+        WebElement submitElement = driver.findElement(By.xpath("//div[@class='lRwqcd']/div"));
 
+        Wrappers.enterText(hourElement, "07");
+        Wrappers.enterText(minuteElement, "30");
+        Wrappers.clickOnElement(driver, submitElement);
+        System.out.println("Wait 5");
+        Thread.sleep(3000);
+
+        WebElement successMsg = driver.findElement(By.xpath("//div[contains(@class,'vHW')]"));
+        System.out.println(successMsg.getText());
+    }
      
     /*
      * Do not change the provided methods unless necessary, they will help in automation and assessment

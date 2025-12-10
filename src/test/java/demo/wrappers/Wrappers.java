@@ -1,12 +1,9 @@
 package demo.wrappers;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -16,98 +13,122 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class Wrappers {
-    /*
-     * Write your selenium wrappers here
-     */
 
     public static void enterText(WebElement element,String text){
         try {
+            if (element == null) {
+                System.out.println("enterText FAILED: Element is NULL");
+                return;
+            }
+            System.out.println("Typing text: " + text);
             element.clear();
             element.sendKeys(text);
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("enterText Exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static void radioButton(ChromeDriver driver, String radiobuttontext){
-        //passing paramaterized xpath
         try {
-            WebElement radioBtn = driver.findElement(
-            By.xpath("//span[contains(@class,'OvPDhc') and contains(text(),'" + radiobuttontext + "')]/../../..//div[@class='vd3tt']"));
-        radioBtn.click();
+            System.out.println("Selecting radio button: " + radiobuttontext);
 
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement radioBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                    By.xpath("//span[contains(@class,'OvPDhc') and contains(text(),'" 
+                            + radiobuttontext + "')]/../../..//div[@class='vd3tt']")
+                )
+            );
+            radioBtn.click();
 
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("radioButton Exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static void checkBox(List<WebElement> elements, String checkbuttontext){
-        //passing paramaterized xpath
         try {
+            System.out.println("Selecting checkbox: " + checkbuttontext);
+
             for (WebElement ele : elements) {
-                if(ele.getText().equals(checkbuttontext)){
+                if (ele.getText().equals(checkbuttontext)) {
                     ele.click();
+                    System.out.println("Checkbox clicked: " + checkbuttontext);
                     break;
                 }
-                
             }
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("checkBox Exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static void selectDropDown(ChromeDriver driver, String dropdowntext){
-        //passing paramaterized xpath
         try {
+            System.out.println("Selecting dropdown: " + dropdowntext);
+
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            String xpath = "//div[contains(@class,'QXL7Te')]//span[normalize-space()='" + dropdowntext + "']";
 
-        // Google Forms option structure
-        String xpath = "//div[contains(@class,'QXL7Te')]//span[normalize-space()='" + dropdowntext + "']";
+            WebElement option = wait.until(
+                ExpectedConditions.elementToBeClickable(By.xpath(xpath))
+            );
 
-        WebElement option = wait.until(
-            ExpectedConditions.elementToBeClickable(By.xpath(xpath))
-        );
-
-        option.click();
+            option.click();
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("selectDropDown Exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    /// use js to click on element which is present anywhere on the page.
+
     public static void clickOnElement(ChromeDriver driver,WebElement element){
         try {
+            System.out.println("Performing JS Click");
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].click();", element);
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("JS Click Exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
-    public static String getDatesDaysAgo(int days){
-       LocalDate date = LocalDate.now();
-       LocalDate date7DaysAgo = date.minusDays(days);
-       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM//DD//yyyy");
-       String formattedDate = date7DaysAgo.format(formatter);
-       return formattedDate;
 
+    public static String getDatesDaysAgo(int days){
+        try {
+            LocalDate date = LocalDate.now();
+            LocalDate date7DaysAgo = date.minusDays(days);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+            String formattedDate = date7DaysAgo.format(formatter);
+            System.out.println("Generated Date: " + formattedDate);
+            return formattedDate;
+
+        } catch (Exception e) {
+            System.out.println("getDatesDaysAgo Exception: " + e.getMessage());
+            return null;
+        }
     }
 
     public static String getEpochTime(){
         long epochTime = System.currentTimeMillis()/1000;
         String epochTimeString = String.valueOf(epochTime);
+        System.out.println("Epoch time: " + epochTimeString);
         return epochTimeString;
     }
 
     public static boolean handleAlert(ChromeDriver driver){
-     boolean status = false;
-     driver.switchTo().alert().dismiss();
-     status = true;
-     return status;
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            wait.until(ExpectedConditions.alertIsPresent());
+
+            driver.switchTo().alert().dismiss();
+            System.out.println("Alert dismissed successfully");
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("No alert found: " + e.getMessage());
+            return false;
+        }
     }
 }
